@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-model="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link href="//cdn.bootcss.com/materialize/0.98.2/css/materialize.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/materialize/0.98.2/js/materialize.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.3.4/vue.min.js"></script>
+</head>
+<body>
+<div id="main">
+    <nav class="nav-extended blue">
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">视频批量下载</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li  v-for="vs in vss">
+                    <a v-on:click="sub(vs.id)" v-bind:class="[selectVs==vs.id?'blue darken-2':'']">{{vs.title}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-content">
+            <div class="col s12">
+                <button v-for="sub in subs" v-on:click="list(sub.id)" v-bind:class="['btn-flat','blue','white-text',selectSub==sub.id?'darken-3':'']">{{sub.title}}</button>
+            </div>
+        </div>
+    </nav>
+    <div class="container" v-if="inited">
+        <div class="row" v-show="!vlistload">
+            <br>
+            <ul class="collection">
+                <li class="collection-item" v-for="l in vlist">
+                    <span class="badge">
+                        {{l.playCount}}
+                        <a v-bind:href="l.sourceURL" target="view_window"> <i class="material-icons right">link</i> </a>
+                        <a> <i class="material-icons right" v-on:click="play(l.videoID)">play_arrow</i> </a>
+                    </span>
+                    <input type="checkbox" v-model="vids" v-bind:id="l.videoID" v-bind:value="l.videoID" name="vids"/>
+                    <label v-bind:for="l.videoID">{{l.title}}</label>
+                </li>
+            </ul>
+            <div class="col s10">
+                &nbsp
+                <a class="btn blue" v-on:click="fanSelect">反选</a>
+                <a class="btn blue" v-on:click="list()">刷新</a>
+            </div>
+
+            <div class="col s2 right-align">
+                <button class="btn red" v-on:click="down" v-bind:disabled='vids.length==0'>下载</button>
+            </div>
+        </div>
+        <div class="row" v-show="vlistload">
+            <br>
+            <br>
+            <div class="progress">
+                <div class="indeterminate"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" v-else>
+        <br>
+        <br>
+        <div class="col offset-s5">
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="play" class="modal">
+        <div class="modal-content">
+            <video src="" class="responsive-video" id="video" controls></video>
+        </div>
+    </div>
+
+    <div id="down" class="modal">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col s12">
+                    <button class="btn blue" v-on:click="downAll">下载所有链接({{downURLs.length}})</button>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="col s12" v-for="downURL in downURLs">
+                    {{downURL}}
+                    <br>
+                </div>
+                <br>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="index.js"></script>
+</html>
